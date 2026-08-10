@@ -34,42 +34,42 @@
     );
   }
 
-  function findCurrentVideo() {
-    const videos = [...document.querySelectorAll('video')]
-      .filter((video) => visibleArea(video) > 0);
+  function findCurrentPost() {
+    const posts = [...document.querySelectorAll('article')]
+      .filter((post) => visibleArea(post) > 0);
 
-    if (!videos.length) {
+    if (!posts.length) {
       return null;
     }
 
-    return videos.reduce((best, video) =>
-      visibleArea(video) > visibleArea(best) ? video : best
+    return posts.reduce((best, post) =>
+      visibleArea(post) > visibleArea(best) ? post : best
     );
   }
 
-  function findNextVideo() {
-    const currentVideo = findCurrentVideo();
-    const currentRect = currentVideo?.getBoundingClientRect();
+  function findNextPost() {
+    const currentPost = findCurrentPost();
+    const currentRect = currentPost?.getBoundingClientRect();
     const currentCenter = currentRect
       ? currentRect.top + currentRect.height / 2
       : innerHeight / 2;
 
-    return [...document.querySelectorAll('video')]
-      .filter((video) => video !== currentVideo)
-      .map((video) => {
-        const rect = video.getBoundingClientRect();
+    return [...document.querySelectorAll('article')]
+      .filter((post) => post !== currentPost)
+      .map((post) => {
+        const rect = post.getBoundingClientRect();
         return {
-          video,
+          post,
           center: rect.top + rect.height / 2,
           hasSize: rect.width > 0 && rect.height > 0
         };
       })
       .filter(({ center, hasSize }) => hasSize && center > currentCenter + 1)
-      .sort((first, second) => first.center - second.center)[0]?.video ?? null;
+      .sort((first, second) => first.center - second.center)[0]?.post ?? null;
   }
 
-  function scrollToNextVideo() {
-    findNextVideo()?.scrollIntoView({
+  function scrollToNextPost() {
+    findNextPost()?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
       inline: 'nearest'
@@ -146,7 +146,7 @@
       event.stopImmediatePropagation();
 
       if (!event.repeat) {
-        scrollToNextVideo();
+        scrollToNextPost();
       }
 
       return;
