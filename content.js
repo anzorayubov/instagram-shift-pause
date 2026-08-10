@@ -34,6 +34,48 @@
     );
   }
 
+  function findCurrentVideo() {
+    const videos = [...document.querySelectorAll('video')]
+      .filter((video) => visibleArea(video) > 0);
+
+    if (!videos.length) {
+      return null;
+    }
+
+    return videos.reduce((best, video) =>
+      visibleArea(video) > visibleArea(best) ? video : best
+    );
+  }
+
+  function findNextVideo() {
+    const currentVideo = findCurrentVideo();
+    const currentRect = currentVideo?.getBoundingClientRect();
+    const currentCenter = currentRect
+      ? currentRect.top + currentRect.height / 2
+      : innerHeight / 2;
+
+    return [...document.querySelectorAll('video')]
+      .filter((video) => video !== currentVideo)
+      .map((video) => {
+        const rect = video.getBoundingClientRect();
+        return {
+          video,
+          center: rect.top + rect.height / 2,
+          hasSize: rect.width > 0 && rect.height > 0
+        };
+      })
+      .filter(({ center, hasSize }) => hasSize && center > currentCenter + 1)
+      .sort((first, second) => first.center - second.center)[0]?.video ?? null;
+  }
+
+  function scrollToNextVideo() {
+    findNextVideo()?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'nearest'
+    });
+  }
+
   function toggleActiveVideo() {
     const video = findActiveVideo();
     if (!video) {
@@ -99,6 +141,17 @@
       return;
     }
 
+    if (event.code === 'Space') {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      if (!event.repeat) {
+        scrollToNextVideo();
+      }
+
+      return;
+    }
+
     if (isSpeedKey(event)) {
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -107,6 +160,12 @@
   }, true);
 
   document.addEventListener('keyup', (event) => {
+    if (event.code === 'Space' && !isEditable(event.target)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return;
+    }
+
     if (!isSpeedKey(event)) {
       return;
     }
