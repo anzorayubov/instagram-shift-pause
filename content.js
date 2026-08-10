@@ -69,8 +69,36 @@
       .sort((first, second) => first.center - second.center)[0]?.post ?? null;
   }
 
-  function scrollToNextPost() {
-    findNextPost()?.scrollIntoView({
+  function findNextVideo() {
+    const currentVideo = findActiveVideo();
+    if (!currentVideo) {
+      return null;
+    }
+
+    const currentRect = currentVideo.getBoundingClientRect();
+    const currentCenter = currentRect.top + currentRect.height / 2;
+
+    return [...document.querySelectorAll('video')]
+      .filter((video) => video !== currentVideo)
+      .map((video) => {
+        const rect = video.getBoundingClientRect();
+        return {
+          video,
+          center: rect.top + rect.height / 2,
+          hasSize: rect.width > 0 && rect.height > 0
+        };
+      })
+      .filter(({ center, hasSize }) => hasSize && center > currentCenter + 1)
+      .sort((first, second) => first.center - second.center)[0]?.video ?? null;
+  }
+
+  function scrollToNextItem() {
+    const isReelsMode = /^\/reels?(\/|$)/.test(location.pathname);
+    const nextItem = isReelsMode
+      ? findNextVideo()
+      : findNextPost() ?? findNextVideo();
+
+    nextItem?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
       inline: 'nearest'
@@ -92,7 +120,7 @@
     }
 
     const labels = direction === 'previous'
-      ? ['Previous', 'Назад']
+      ? ['Previous', 'Go back', 'Назад']
       : ['Next', 'Далее'];
 
     const control = [...post.querySelectorAll('[aria-label]')]
@@ -187,7 +215,7 @@
       event.stopImmediatePropagation();
 
       if (!event.repeat) {
-        scrollToNextPost();
+        scrollToNextItem();
       }
 
       return;
