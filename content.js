@@ -3,6 +3,7 @@
 
   const PLAY_OVERLAY_SELECTOR =
     'div[aria-label="Play"].x1yomw13.x1dhbnvk.x4iexvp.xfem2s5.xv2xd2s.xg79w0';
+  const REWIND_SECONDS = 1;
   let spedUpVideo = null;
 
   function isEditable(element) {
@@ -76,6 +77,33 @@
     });
   }
 
+  function isPreviousSlideKey(event) {
+    return event.code === 'BracketLeft' || event.key === '[' || event.key.toLowerCase() === 'х';
+  }
+
+  function isNextSlideKey(event) {
+    return event.code === 'BracketRight' || event.key === ']' || event.key.toLowerCase() === 'ъ';
+  }
+
+  function switchActivePostSlide(direction) {
+    const post = findCurrentPost();
+    if (!post) {
+      return;
+    }
+
+    const labels = direction === 'previous'
+      ? ['Previous', 'Назад']
+      : ['Next', 'Далее'];
+
+    const control = [...post.querySelectorAll('[aria-label]')]
+      .find((element) => labels.includes(element.getAttribute('aria-label')));
+    const button = control?.closest('button') ?? control;
+
+    if (button instanceof HTMLElement) {
+      button.click();
+    }
+  }
+
   function toggleActiveVideo() {
     const video = findActiveVideo();
     if (!video) {
@@ -91,6 +119,19 @@
 
   function isSpeedKey(event) {
     return event.code === 'Period' || event.key === '.' || event.key.toLowerCase() === 'ю';
+  }
+
+  function isRewindKey(event) {
+    return event.code === 'Comma' || event.key === ',' || event.key.toLowerCase() === 'б';
+  }
+
+  function rewindActiveVideo() {
+    const video = findActiveVideo();
+    if (!video) {
+      return;
+    }
+
+    video.currentTime = Math.max(0, video.currentTime - REWIND_SECONDS);
   }
 
   function speedUpActiveVideo() {
@@ -149,6 +190,24 @@
         scrollToNextPost();
       }
 
+      return;
+    }
+
+    if (isPreviousSlideKey(event) || isNextSlideKey(event)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      if (!event.repeat) {
+        switchActivePostSlide(isPreviousSlideKey(event) ? 'previous' : 'next');
+      }
+
+      return;
+    }
+
+    if (isRewindKey(event)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      rewindActiveVideo();
       return;
     }
 
