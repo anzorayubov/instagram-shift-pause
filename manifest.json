@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Instagram Shift Pause",
+  "version": "1.1.0",
+  "description": "Управляет паузой и скоростью активного видео Instagram и удаляет оверлей Play.",
+  "content_scripts": [
+    {
+      "matches": ["https://www.instagram.com/*"],
+      "css": ["content.css"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

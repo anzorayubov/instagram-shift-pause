@@ -1,0 +1,4 @@
+/* Не дает иконке Play мелькнуть до того, как MutationObserver удалит ее из DOM. */
+div[aria-label="Play"].x1yomw13.x1dhbnvk.x4iexvp.xfem2s5.xv2xd2s.xg79w0 {
+  display: none !important;
+}
