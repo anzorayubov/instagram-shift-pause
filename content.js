@@ -104,7 +104,7 @@
     }
 
     spedUpVideo = video;
-    spedUpVideo.playbackRate = 2;
+    spedUpVideo.playbackRate = 1.75;
   }
 
   function restoreNormalSpeed() {
