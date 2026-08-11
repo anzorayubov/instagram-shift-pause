@@ -3,7 +3,7 @@
 
   const PLAY_OVERLAY_SELECTOR =
     'div[aria-label="Play"].x1yomw13.x1dhbnvk.x4iexvp.xfem2s5.xv2xd2s.xg79w0';
-  const REWIND_SECONDS = 1;
+  const REWIND_SECONDS = 3;
   let spedUpVideo = null;
 
   function isEditable(element) {
