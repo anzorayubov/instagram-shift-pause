@@ -97,8 +97,11 @@
     const nextItem = isReelsMode
       ? findNextVideo()
       : findNextPost() ?? findNextVideo();
+    const scrollTarget = nextItem instanceof HTMLVideoElement
+      ? nextItem
+      : nextItem?.querySelector('video') ?? nextItem;
 
-    nextItem?.scrollIntoView({
+    scrollTarget?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
       inline: 'nearest'
