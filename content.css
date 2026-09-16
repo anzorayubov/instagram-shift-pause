@@ -2,3 +2,26 @@
 div[aria-label="Play"].x1yomw13.x1dhbnvk.x4iexvp.xfem2s5.xv2xd2s.xg79w0 {
   display: none !important;
 }
+
+/* Сохраняет последний кадр видимым, пока другое расширение меняет источник видео. */
+.isp-frame-overlay-host {
+  position: relative !important;
+}
+
+.isp-frame-overlay {
+  position: absolute;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.isp-frame-overlay__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.isp-frame-overlay__image[hidden] {
+  display: none !important;
+}
